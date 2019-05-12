@@ -1,84 +1,27 @@
-import React, { Component } from 'react';
-import MapGL, { Marker } from 'react-map-gl';
+import dotenv from 'dotenv';
+import React, { Fragment } from 'react';
+import './config/ReactotronConfig';
 
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import User from './components/user';
+import { Provider } from 'react-redux';
+import store from './store';
 
-export default class Map extends Component {
-  state = {
-    viewport: {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      latitude: -23.5439948,
-      longitude: -46.6065452,
-      zoom: 14,
-      openModal: false,
-    },
-  };
+import Routes from './routes';
 
-  componentDidMount() {
-    window.addEventListener('resize', this.resize);
-    this.resize();
-  }
+import 'font-awesome/css/font-awesome.css';
+import './styles.css';
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.resize);
-  }
+dotenv.config();
 
-  resize = () => {
-    const { viewport } = this.state;
+const App = () => (
+  <Provider store={store}>
+    <Fragment>
+      <Routes />
+      <ToastContainer autoClose={5000} />
+    </Fragment>
+  </Provider>
+);
 
-    this.setState({
-      viewport: {
-        ...viewport,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      },
-    });
-  };
-
-  handleMapClick = (e) => {
-    e.preventDefault();
-
-    const { openModal } = this.state;
-
-    this.setState({ openModal: !openModal });
-    // const [longitude, latitude] = e.lngLat;
-    // alert(`Latitude: ${latitude} \nLongitude: ${longitude}`);
-    // return ;
-  };
-
-  render() {
-    const { openModal } = this.state;
-
-    return (
-      <div>
-        {openModal && <User onClick={this.handleMapClick} />}
-        <MapGL
-          {...this.state.viewport}
-          onClick={this.handleMapClick}
-          mapStyle="mapbox://styles/mapbox/basic-v9"
-          mapboxApiAccessToken="pk.eyJ1IjoiZGllZ28zZyIsImEiOiJjamh0aHc4em0wZHdvM2tyc3hqbzNvanhrIn0.3HWnXHy_RCi35opzKo8sHQ"
-          onViewportChange={viewport => this.setState({ viewport })}
-        >
-          <Marker
-            latitude={-23.5439948}
-            longitude={-46.6065452}
-            onClick={this.handleMapClick}
-            captureClick
-          >
-            <img
-              style={{
-                borderRadius: 100,
-                width: 48,
-                height: 48,
-              }}
-              src="https://avatars2.githubusercontent.com/u/2254731?v=4"
-            />
-          </Marker>
-        </MapGL>
-      </div>
-    );
-  }
-}
+export default App;
